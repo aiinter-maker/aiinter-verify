@@ -8,48 +8,36 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f1f5f9; color: #1e293b; padding: 40px 20px; line-height: 1.6; }
         .container { max-width: 800px; margin: 0 auto; background: #ffffff; padding: 45px; border-radius: 16px; box-shadow: 0 20px 40px rgba(15,23,42,0.06); border: 1px solid #e2e8f0; }
-        
-        /* LOGO 区域视觉 */
         .logo-area { text-align: center; margin-bottom: 35px; border-bottom: 3px double #cbd5e1; padding-bottom: 25px; }
-        .logo-img { width: 120px; height: auto; margin-bottom: 15px; }
         .logo-title { font-size: 28px; font-weight: 800; color: #1e3a8a; letter-spacing: 0.5px; }
         .logo-subtitle { font-size: 15px; color: #475569; margin-top: 6px; font-weight: 600; letter-spacing: 1px; }
-        
         .search-box { display: flex; gap: 12px; margin-bottom: 35px; }
         input { flex: 1; padding: 14px 20px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 16px; outline: none; transition: all 0.3s; }
         input:focus { border-color: #1e3a8a; box-shadow: 0 0 0 4px rgba(30,58,138,0.1); }
         button { padding: 14px 35px; background: #1e3a8a; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
         button:hover { background: #172554; }
-        
         .result-card { display: none; background: #ffffff; border-radius: 12px; }
         .result-card.active { display: block; animation: fadeIn 0.4s ease; }
-        
-        /* 核心看板与网页二维码布局 */
         .flex-panel { display: flex; gap: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-left: 6px solid #059669; padding: 24px; border-radius: 8px; margin-bottom: 30px; }
         .summary-panel { flex: 1; }
         .qrcode-panel { width: 140px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px dashed #cbd5e1; padding-left: 20px; }
         .qrcode-panel img { width: 110px; height: 110px; border: 1px solid #e2e8f0; padding: 4px; background: #fff; border-radius: 4px; }
-        .qrcode-label { font-size: 11px; color: #059669; font-weight: 700; margin-top: 6px; text-transform: uppercase; }
-
+        .qrcode-label { font-size: 11px; color: #1e3a8a; font-weight: 700; margin-top: 6px; text-transform: uppercase; }
         .summary-row { display: flex; margin-bottom: 12px; font-size: 15px; }
         .summary-row:last-child { margin-bottom: 0; }
         .summary-row strong { width: 160px; color: #475569; flex-shrink: 0; }
         .summary-row span { color: #0f172a; font-weight: 500; }
         .status-badge { display: inline-block; padding: 4px 14px; background: #dcfce7; color: #15803d; font-weight: 700; border-radius: 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
-        
         .section-title { font-size: 16px; font-weight: 700; color: #1e3a8a; margin: 25px 0 12px 0; padding-left: 10px; border-left: 4px solid #1e3a8a; }
         .rights-grid { display: flex; flex-direction: column; gap: 12px; }
         .right-item { background: #f8fafc; border: 1px solid #f1f5f9; padding: 16px; border-radius: 8px; }
         .right-item h4 { font-size: 14px; color: #0f172a; margin-bottom: 6px; font-weight: 700; }
         .right-item p { font-size: 13px; color: #475569; text-align: justify; }
-        
         .legal-notes { margin-top: 35px; padding-top: 20px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: #64748b; }
         .legal-notes p { margin-bottom: 6px; }
-        
         .no-data { display: none; text-align: center; color: #b91c1c; background: #fef2f2; padding: 18px; border-radius: 8px; border: 1px solid #fee2e2; font-weight: 600; font-size: 15px; }
         .no-data.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
         @media(max-width: 600px) {
             .flex-panel { flex-direction: column; }
             .qrcode-panel { width: 100%; border-left: none; border-top: 1px dashed #cbd5e1; padding-left: 0; padding-top: 20px; }
@@ -60,8 +48,6 @@
 
 <div class="container">
     <div class="logo-area">
-        <!-- 自动加载仓库同级目录下的 logo.jpg 或 logo.png -->
-        <img class="logo-img" src="logo.jpg" onerror="this.src='logo.png'; this.onerror=function(){this.style.display='none';}" alt="IAIC LOGO">
         <div class="logo-title">IAIC Verification Center</div>
         <div class="logo-subtitle">国际人工智能委员会 · 独家授权与准入核验中心</div>
     </div>
@@ -71,7 +57,7 @@
         <button onclick="handleSearch()">Verify / 核验</button>
     </div>
 
-    <!-- 查询结果卡片 -->
+    <!-- 查询结果 -->
     <div id="resultCard" class="result-card">
         <div class="flex-panel">
             <div class="summary-panel">
@@ -82,10 +68,10 @@
                 <div class="summary-row"><strong>Scope / 授权项目</strong><span id="resProject" style="color: #b45309; font-weight: 700;"></span></div>
                 <div class="summary-row"><strong>Registered Address / 注册地址</strong><span id="resAddress"></span></div>
             </div>
-            <!-- 前端实时动态防伪码区域 -->
+            <!-- 固定二维码高精渲染区 -->
             <div class="qrcode-panel">
                 <img id="resQrCode" src="" alt="Verification QR Code">
-                <div class="qrcode-label">✓ IAIC SECURE</div>
+                <div class="qrcode-label">✓ OFFICIAL</div>
             </div>
         </div>
 
@@ -106,7 +92,6 @@
 </div>
 
 <script>
-    // 官方底层授权数据库
     const database = [
         {
             id: "IAIC-OPR-CN-2026-001",
@@ -153,10 +138,9 @@
             document.getElementById('resProject').innerText = match.project;
             document.getElementById('resAddress').innerText = match.address;
 
-            // 自动识别当前新域名并渲染匹配的二维码
-            const currentSiteUrl = window.location.href.split('?')[0];
-            const qrContent = encodeURIComponent(`${currentSiteUrl}?id=${match.id}`);
-            document.getElementById('resQrCode').src = `https://qrserver.com{qrContent}&color=059669`;
+            // 🌟 网页内置二维码：这里使用了国际顶级高对比度稳定渲染服务，自动根据新网址拼装皇家蓝(#1e3a8a)防伪码
+            const finalLink = "https://github.io" + match.id;
+            document.getElementById('resQrCode').src = "https://quickchart.io" + encodeURIComponent(finalLink) + "&dark=1e3a8a&size=200&margin=1";
 
             document.getElementById('rightsContainer').innerHTML = match.rights.map(r => `
                 <div class="right-item">
@@ -170,3 +154,16 @@
             resultCard.classList.add('active');
             noData.classList.remove('active');
         } else {
+            resultCard.classList.remove('active');
+            noData.classList.add('active');
+        }
+    }
+
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') handleSearch();
+    });
+
+    // 智能监测：如果带参数进入，直接自动出结果
+    window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const idParam = urlParams.get('id');
