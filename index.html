@@ -5,54 +5,244 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IAIC Verification & Authorization Center</title>
     <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-dark: #172554;
+            --success: #059669;
+            --success-light: #dcfce7;
+            --warn: #b45309;
+            --danger: #b91c1c;
+            --bg-page: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-light: #f8fafc;
+            --border: #e2e8f0;
+            --border-dark: #cbd5e1;
+            --text-main: #0f172a;
+            --text-sub: #475569;
+            --text-light: #64748b;
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f1f5f9; color: #1e293b; padding: 40px 20px; line-height: 1.6; }
-        .container { max-width: 800px; margin: 0 auto; background: #ffffff; padding: 45px; border-radius: 16px; box-shadow: 0 20px 40px rgba(15,23,42,0.06); border: 1px solid #e2e8f0; }
-        .logo-area { text-align: center; margin-bottom: 35px; border-bottom: 3px double #cbd5e1; padding-bottom: 25px; }
-        .logo-title { font-size: 28px; font-weight: 800; color: #1e3a8a; letter-spacing: 0.5px; }
-        .logo-subtitle { font-size: 15px; color: #475569; margin-top: 6px; font-weight: 600; letter-spacing: 1px; }
-        .search-box { display: flex; gap: 12px; margin-bottom: 35px; }
-        input { flex: 1; padding: 14px 20px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 16px; outline: none; transition: all 0.3s; }
-        input:focus { border-color: #1e3a8a; box-shadow: 0 0 0 4px rgba(30,58,138,0.1); }
-        button { padding: 14px 35px; background: #1e3a8a; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-        button:hover { background: #172554; }
-        
-        .result-card { display: none; background: #ffffff; border-radius: 12px; }
-        .result-card.active { display: block; animation: fadeIn 0.4s ease; }
-        
-        .flex-panel { display: flex; gap: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-left: 6px solid #059669; padding: 24px; border-radius: 8px; margin-bottom: 30px; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 45px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(15,23,42,0.06);
+            border: 1px solid var(--border);
+        }
+        .logo-area {
+            text-align: center;
+            margin-bottom: 35px;
+            border-bottom: 3px double var(--border-dark);
+            padding-bottom: 25px;
+        }
+        .logo-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+        }
+        .logo-subtitle {
+            font-size: 15px;
+            color: var(--text-sub);
+            margin-top: 6px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .search-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+        input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid var(--border-dark);
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(30,58,138,0.1);
+        }
+        button {
+            padding: 14px 35px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            white-space: nowrap;
+        }
+        button:hover { background: var(--primary-dark); }
+        button:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .result-card {
+            display: none;
+            background: var(--bg-card);
+            border-radius: 12px;
+        }
+        .result-card.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+        .flex-panel {
+            display: flex;
+            gap: 20px;
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-left: 6px solid var(--success);
+            padding: 24px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
         .summary-panel { flex: 1; }
-        .qrcode-panel { width: 140px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px dashed #cbd5e1; padding-left: 20px; }
-        .qrcode-panel img { width: 110px; height: 110px; border: 1px solid #e2e8f0; padding: 4px; background: #fff; border-radius: 4px; }
-        .qrcode-label { font-size: 11px; color: #1e3a8a; font-weight: 700; margin-top: 6px; text-transform: uppercase; }
-        
-        .summary-row { display: flex; margin-bottom: 12px; font-size: 15px; }
+        .qrcode-panel {
+            width: 140px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px dashed var(--border-dark);
+            padding-left: 20px;
+        }
+        .qrcode-panel img {
+            width: 110px;
+            height: 110px;
+            border: 1px solid var(--border);
+            padding: 4px;
+            background: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .qrcode-panel img:hover { transform: scale(1.05); }
+        .qrcode-label {
+            font-size: 11px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-top: 6px;
+            text-transform: uppercase;
+        }
+        .summary-row {
+            display: flex;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
         .summary-row:last-child { margin-bottom: 0; }
-        .summary-row strong { width: 160px; color: #475569; flex-shrink: 0; }
-        .summary-row span { color: #0f172a; font-weight: 500; }
-        
-        .status-badge { display: inline-block; padding: 4px 14px; background: #dcfce7; color: #15803d; font-weight: 700; border-radius: 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .section-title { font-size: 16px; font-weight: 700; color: #1e3a8a; margin: 25px 0 12px 0; padding-left: 10px; border-left: 4px solid #1e3a8a; }
-        .rights-grid { display: flex; flex-direction: column; gap: 12px; }
-        .right-item { background: #f8fafc; border: 1px solid #f1f5f9; padding: 16px; border-radius: 8px; }
-        .right-item h4 { font-size: 14px; color: #0f172a; margin-bottom: 6px; font-weight: 700; }
-        .right-item p { font-size: 13px; color: #475569; text-align: justify; }
-        
-        .legal-notes { margin-top: 35px; padding-top: 20px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: #64748b; }
+        .summary-row strong {
+            width: 160px;
+            color: var(--text-sub);
+            flex-shrink: 0;
+        }
+        .summary-row span { color: var(--text-main); font-weight: 500; }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            background: var(--success-light);
+            color: var(--success);
+            font-weight: 700;
+            border-radius: 6px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 25px 0 12px 0;
+            padding-left: 10px;
+            border-left: 4px solid var(--primary);
+        }
+        .rights-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .right-item {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 8px;
+        }
+        .right-item h4 {
+            font-size: 14px;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+        .right-item p {
+            font-size: 13px;
+            color: var(--text-sub);
+            text-align: justify;
+        }
+        .legal-notes {
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border-dark);
+            font-size: 12px;
+            color: var(--text-light);
+        }
         .legal-notes p { margin-bottom: 6px; }
-        
-        .no-data { display: none; text-align: center; color: #b91c1c; background: #fef2f2; padding: 18px; border-radius: 8px; border: 1px solid #fee2e2; font-weight: 600; font-size: 15px; }
+        .no-data {
+            display: none;
+            text-align: center;
+            color: var(--danger);
+            background: #fef2f2;
+            padding: 18px;
+            border-radius: 8px;
+            border: 1px solid #fee2e2;
+            font-weight: 600;
+            font-size: 15px;
+            margin-top: 20px;
+        }
         .no-data.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
+        .tip-notice {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #166534;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         @media(max-width: 600px) {
+            .container { padding: 25px 18px; }
+            .search-box { flex-direction: column; }
             .flex-panel { flex-direction: column; }
-            .qrcode-panel { width: 100%; border-left: none; border-top: 1px dashed #cbd5e1; padding-left: 0; padding-top: 20px; }
+            .qrcode-panel {
+                width: 100%;
+                border-left: none;
+                border-top: 1px dashed var(--border-dark);
+                padding-left: 0;
+                padding-top: 20px;
+            }
+            .summary-row strong { width: 130px; }
+            .logo-title { font-size: 24px; }
         }
     </style>
 </head>
 <body>
-
 <div class="container">
     <div class="logo-area">
         <div class="logo-title">IAIC Verification Center</div>
@@ -68,21 +258,39 @@
     <div id="resultCard" class="result-card">
         <div class="flex-panel">
             <div class="summary-panel">
-                <div class="summary-row"><strong>Certificate No. / 授权编号</strong><span id="resId" style="font-weight:700; color:#1e3a8a; font-family: monospace; font-size: 16px;"></span></div>
-                <div class="summary-row"><strong>Status / 核验状态</strong><span><span class="status-badge" id="resStatus"></span></span></div>
-                <div class="summary-row"><strong>Authorized Entity / 被授权机构</strong><span id="resOrg" style="font-weight:700;"></span></div>
-                <div class="summary-row"><strong>Validity Period / 权限期限</strong><span id="resPeriod"></span></div>
-                <div class="summary-row"><strong>Scope / 授权项目</strong><span id="resProject" style="color: #b45309; font-weight: 700;"></span></div>
-                <div class="summary-row"><strong>Registered Address / 注册地址</strong><span id="resAddress"></span></div>
+                <div class="summary-row">
+                    <strong>Certificate No. / 授权编号</strong>
+                    <span id="resId" style="font-weight:700; color:var(--primary); font-family: monospace; font-size: 16px;"></span>
+                </div>
+                <div class="summary-row">
+                    <strong>Status / 核验状态</strong>
+                    <span><span class="status-badge" id="resStatus"></span></span>
+                </div>
+                <div class="summary-row">
+                    <strong>Authorized Entity / 被授权机构</strong>
+                    <span id="resOrg" style="font-weight:700;"></span>
+                </div>
+                <div class="summary-row">
+                    <strong>Validity Period / 权限期限</strong>
+                    <span id="resPeriod"></span>
+                </div>
+                <div class="summary-row">
+                    <strong>Scope / 授权项目</strong>
+                    <span id="resProject" style="color: var(--warn); font-weight: 700;"></span>
+                </div>
+                <div class="summary-row">
+                    <strong>Registered Address / 注册地址</strong>
+                    <span id="resAddress"></span>
+                </div>
             </div>
-            <!-- 固定二维码高精渲染区 -->
+            <!-- 二维码区域 -->
             <div class="qrcode-panel">
-                <img id="resQrCode" src="" alt="Verification QR Code">
+                <img id="resQrCode" alt="Verification QR Code" loading="lazy">
                 <div class="qrcode-label">✓ OFFICIAL</div>
             </div>
         </div>
 
-        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 8px; font-size: 14px; color: #166534; font-weight: 600; margin-bottom: 10px;">
+        <div class="tip-notice">
             📢 核心声明：智裁(北京)人工智能科技有限公司是中国内地（不含港澳台）唯一有权运营 IAIC 课程体系、发展并管理“IAIC课程授权培训中心”的实体。
         </div>
 
@@ -99,70 +307,107 @@
 </div>
 
 <script>
-    // 官方底层纯净数据库
-    const database = [
-        {
-            id:"IAIC-OPR-CN-2026-001",
-            status:"valid",
-            orgName:"智裁（北京）人工智能科技有限公司",
-            period:"2026.06.23 - 2029.06.23",
-            project: "中国内地独家运营权 (Exclusive Master Operation Rights)",
-            address: "No.63 Middle Street, Choujiadian Village, Beixiaoying Town, Shunyi District, Beijing City, China",
-            rights: [
-                { title: "1. 课程体系使用权", desc: "可以在中国内地使用、复制、分发 IAIC 指定的全套在线课程资源（课件、视频、题库等），并有权进行本地化微调。" },
-                { title: "2. 认证服务运营权", desc: "独家负责中国内地学员的证书申请受理、资料审核与提交，统一向 IAIC 总部申办证书。证书由 IAIC 美国总部颁发，智裁北京是唯一的合法申请通道。" },
-                { title: "3. 品牌与商标使用权", desc: "可在授权范围内使用 IAIC 名称、Logo 及“IAIC 课程授权培训中心”相关标识，用于合规推广。" },
-                { title: "4. 再授权权利", desc: "有权在中国内地自行发展、签约、管理“IAIC 课程授权培训中心”（单点、非独家、不可再授权），并收取课程资源包费、年度管理服务费和证书服务费。" },
-                { title: "5. 维权权利", desc: "有权在中国内地对侵犯 IAIC 品牌 and 课程版权的行为采取维权措施。" }
-            ],
-            legalNotes: [
-                "证书颁发说明：IAIC 证书由 IAIC（美国加州注册公司）统一审核颁发。被授权机构无权自行印制或颁发 IAIC 证书。",
-                "证书性质界定：IAIC 证书为专业培训结业证明，证明持证人完成了规定的培训课程，并非国家职业资格、执业资格或从业许可。",
-                "独立主体声明：被授权机构为独立经营主体，其培训活动的质量、收费、售后及相关法律责任，由该机构自行承担。"
-            ]
-        }
-    ];
+// ==================== 全局配置常量（统一修改入口） ====================
+const CONFIG = {
+    officialSite: "https://www.aiinter.org", // 你的自有域名二维码地址
+    qrSize: "110x110",
+    qrColor: "1e3a8a",
+    qrMargin: 5,
+    qrApi: "https://api.qrserver.com/v1/create-qr-code/",
+    defaultQR: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='110' viewBox='0 0 100 100'%3E%3Crect fill='%23eee' width='100' height='100'/%3E%3Ctext x='50' y='55' font-size='12' text-anchor='middle' fill='%23666'%3E二维码加载中%3C/text%3E%3C/svg%3E"
+};
 
-    // 核心检索逻辑（已修正二维码生成）
-    function executeSearch() {
-        const inputField = document.getElementById('searchInput');
-        if (!inputField) return;
+// 官方底层纯净数据库
+const database = [
+    {
+        id:"IAIC-OPR-CN-2026-001",
+        status:"valid",
+        statusText:"有效",
+        orgName:"智裁（北京）人工智能科技有限公司",
+        period:"2026.06.23 - 2029.06.23",
+        project: "中国内地独家运营权 (Exclusive Master Operation Rights)",
+        address: "No.63 Middle Street, Choujiadian Village, Beixiaoying Town, Shunyi District, Beijing City, China",
+        rights: [
+            { title: "1. 课程体系使用权", desc: "可以在中国内地使用、复制、分发 IAIC 指定的全套在线课程资源（课件、视频、题库等），并有权进行本地化微调。" },
+            { title: "2. 认证服务运营权", desc: "独家负责中国内地学员的证书申请受理、资料审核与提交，统一向 IAIC 总部申办证书。证书由 IAIC 美国总部颁发，智裁北京是唯一的合法申请通道。" },
+            { title: "3. 品牌与商标使用权", desc: "可在授权范围内使用 IAIC 名称、Logo 及“IAIC 课程授权培训中心”相关标识，用于合规推广。" },
+            { title: "4. 再授权权利", desc: "有权在中国内地自行发展、签约、管理“IAIC 课程授权培训中心”（单点、非独家、不可再授权），并收取课程资源包费、年度管理服务费和证书服务费。" },
+            { title: "5. 维权权利", desc: "有权在中国内地对侵犯 IAIC 品牌 and 课程版权的行为采取维权措施。" }
+        ],
+        legalNotes: [
+            "证书颁发说明：IAIC 证书由 IAIC（美国加州注册公司）统一审核颁发。被授权机构无权自行印制或颁发 IAIC 证书。",
+            "证书性质界定：IAIC 证书为专业培训结业证明，证明持证人完成了规定的培训课程，并非国家职业资格、执业资格或从业许可。",
+            "独立主体声明：被授权机构为独立经营主体，其培训活动的质量、收费、售后及相关法律责任，由该机构自行承担。"
+        ]
+    }
+];
 
-        const keyword = inputField.value.trim().toLowerCase();
-        const resultCard = document.getElementById('resultCard');
-        const noData = document.getElementById('noData');
+// DOM元素缓存（减少重复查询DOM，提升性能）
+const els = {
+    searchInput: document.getElementById('searchInput'),
+    searchBtn: document.getElementById('searchBtn'),
+    resultCard: document.getElementById('resultCard'),
+    noData: document.getElementById('noData'),
+    resId: document.getElementById('resId'),
+    resStatus: document.getElementById('resStatus'),
+    resOrg: document.getElementById('resOrg'),
+    resPeriod: document.getElementById('resPeriod'),
+    resProject: document.getElementById('resProject'),
+    resAddress: document.getElementById('resAddress'),
+    resQrCode: document.getElementById('resQrCode'),
+    rightsContainer: document.getElementById('rightsContainer'),
+    legalNotesContainer: document.getElementById('legalNotesContainer')
+};
 
-        if (!keyword) {
-            alert('Please enter a query keyword! / 请输入证书编号或机构名称！');
-            return;
-        }
+// 生成二维码链接
+function buildQRUrl(content) {
+    const params = new URLSearchParams({
+        size: CONFIG.qrSize,
+        data: content,
+        color: CONFIG.qrColor,
+        margin: CONFIG.qrMargin
+    })
+    return `${CONFIG.qrApi}?${params.toString()}`;
+}
 
-        // 大小写模糊匹配
-        const match = database.find(item => 
-            item.id.toLowerCase().includes(keyword) || 
-            item.orgName.toLowerCase().includes(keyword)
-        );
+// 检索主逻辑
+function executeSearch() {
+    const keyword = els.searchInput.value.trim().toLowerCase();
+    if (!keyword) {
+        alert('Please enter a query keyword! / 请输入证书编号或机构名称！');
+        return;
+    }
 
+    // 按钮加载状态
+    els.searchBtn.disabled = true;
+    els.searchBtn.innerText = "Searching... / 查询中";
+
+    // 模糊匹配
+    const match = database.find(item => 
+        item.id.toLowerCase().includes(keyword) || 
+        item.orgName.toLowerCase().includes(keyword)
+    );
+
+    setTimeout(() => {
         if (match) {
-            // 填充基本信息
-            document.getElementById('resId').innerText = match.id;
-            document.getElementById('resStatus').innerText = match.status;
-            document.getElementById('resOrg').innerText = match.orgName;
-            document.getElementById('resPeriod').innerText = match.period;
-            document.getElementById('resProject').innerText = match.project;
-            document.getElementById('resAddress').innerText = match.address;
+            // 填充基础信息
+            els.resId.innerText = match.id;
+            els.resStatus.innerText = match.statusText;
+            els.resOrg.innerText = match.orgName;
+            els.resPeriod.innerText = match.period;
+            els.resProject.innerText = match.project;
+            els.resAddress.innerText = match.address;
 
-            // ✅ 修正后的二维码生成（使用 qrserver API）
-            const finalLink = "https://github.io/" + match.id;   // 示例验证链接，可按需替换
-            const qrApiBase = "https://api.qrserver.com/v1/create-qr-code/";
-            const qrSrc = qrApiBase 
-                        + "?size=110x110" 
-                        + "&data=" + encodeURIComponent(finalLink)
-                        + "&color=1e3a8a&margin=5";
-            document.getElementById('resQrCode').src = qrSrc;
+            // 生成二维码（内容为你的官网域名）
+            const qrLink = CONFIG.officialSite;
+            els.resQrCode.src = buildQRUrl(qrLink);
+            // 加载失败兜底
+            els.resQrCode.onerror = () => {
+                els.resQrCode.src = CONFIG.defaultQR;
+            };
 
             // 渲染权益列表
-            document.getElementById('rightsContainer').innerHTML = match.rights.map(r => `
+            els.rightsContainer.innerHTML = match.rights.map(r => `
                 <div class="right-item">
                     <h4>${r.title}</h4>
                     <p>${r.desc}</p>
@@ -170,20 +415,38 @@
             `).join('');
 
             // 渲染法务备注
-            document.getElementById('legalNotesContainer').innerHTML = match.legalNotes.map(text => `<p>• ${text}</p>`).join('');
+            els.legalNotesContainer.innerHTML = match.legalNotes.map(text => `<p>• ${text}</p>`).join('');
 
-            // 显示结果卡片，隐藏“无数据”提示
-            resultCard.classList.add('active');
-            noData.classList.remove('active');
+            // 切换显示状态
+            els.resultCard.classList.add('active');
+            els.noData.classList.remove('active');
         } else {
-            resultCard.classList.remove('active');
-            noData.classList.add('active');
+            els.resultCard.classList.remove('active');
+            els.noData.classList.add('active');
         }
+        // 恢复按钮
+        els.searchBtn.disabled = false;
+        els.searchBtn.innerText = "Verify / 核验";
+    }, 300);
+}
+
+// 绑定事件
+els.searchBtn.addEventListener('click', executeSearch);
+// 回车搜索
+els.searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') executeSearch();
+});
+// 清空输入框自动隐藏结果
+els.searchInput.addEventListener('input', () => {
+    if (!els.searchInput.value.trim()) {
+        els.resultCard.classList.remove('active');
+        els.noData.classList.remove('active');
     }
-
-    // 绑定搜索按钮事件
-    document.getElementById('searchBtn').addEventListener('click', executeSearch);
+});
+// 二维码点击放大预览
+els.resQrCode.addEventListener('click', () => {
+    window.open(els.resQrCode.src, '_blank');
+});
 </script>
-
 </body>
 </html>
